@@ -1,0 +1,5 @@
+What did you find the most challenging about this assignment and what did you do to overcome it? Please give your response some thought.
+I found that the most challenging aspect of this assignment was how to properly structure the code. I made quite a few changes throughout the process, and ended up clumping my code in a few different functions to make it a little cleaner and easier to read. 
+
+What did you like the most about this assignment and why? Please give your response some thought.
+I like that I had to think a little about how to write and structure the code myself. Since there were not exact instructions this week, it gave me the opportunity to mess up and try different things. 

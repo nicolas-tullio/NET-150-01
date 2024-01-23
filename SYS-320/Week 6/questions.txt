@@ -1,0 +1,11 @@
+1. What has been your experience learning bash?
+I had very minimal knowledge of bash before starting, so this was a good introduction to it. 
+
+2. What would have made the experience with learning it better, if there were problems with it, my instructions, or the assignments?
+I think most of the instruction and assignments were well put together
+
+3. Approximately how much time did you spend working on assignments?
+Often, I would spend a few hours over two nights or so
+
+4. Are you able to see how the programs used in this class or learning bash would be helpful for your career?
+Yes, this does seem to help quite a bit, especially in a sysadmin role. 
