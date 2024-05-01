@@ -1,0 +1,7 @@
+{
+    "vcenter_server": "vcenter.nicolas.local",
+    "vm_folder": "BASEVM",
+    "esxi_host": "192.168.7.29",
+    "datastore": "datastore1-super19",
+    "snapshot": "Base"
+}
