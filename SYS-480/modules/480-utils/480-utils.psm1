@@ -128,7 +128,7 @@ function New-Network($conf) {
 
 function Get-IP ($conf) {
     try {
-        Get-VM -Location $conf.vm_folder | Select-Object Name -ExpandProperty Name
+        Get-VM | Select-Object Name -ExpandProperty Name
         $vm = Get-VM -Name (Read-Host -Prompt "`nChoose a VM") -ErrorAction Stop
         $ip = (Get-VM -Name $vm).Guest.IPAddress[0]
         $mac = (Get-NetworkAdapter -VM $vm | Select-Object MacAddress).MacAddress
@@ -141,5 +141,69 @@ MAC: $mac
     }
     catch {
         Write-Host "An error occurred: $_"
+    }
+}
+
+function Set-Power($conf) {
+    try {
+        Get-VM | Select-Object Name -ExpandProperty Name
+        try {
+            $vm = Get-VM -Name (Read-Host -Prompt "`nChoose a VM to manage") -ErrorAction Stop
+            $action = Read-Host -Prompt "`nWould you like to start or stop the VM? (Enter 'start' or 'stop')"
+            if ($action -eq "start") {
+                try {
+                    Start-VM -VM $vm -Confirm:$false
+                    Write-Host "VM $vm started successfully." -ForegroundColor Green
+                }
+                catch {
+                    Write-Host "An error occurred while starting the VM: $_" -ForegroundColor Red
+                }
+            }
+            elseif ($action -eq "stop") {
+                try {
+                    Stop-VM -VM $vm -Confirm:$false
+                    Write-Host "VM $vm stopped successfully." -ForegroundColor Green
+                }
+                catch {
+                    Write-Host "An error occurred while stopping the VM: $_" -ForegroundColor Red
+                }
+            }
+            else {
+                Write-Host "Invalid action. Please enter 'start' or 'stop'." -ForegroundColor Red
+            }
+        }
+        catch {
+            Write-Host "An error occurred while selecting the VM: $_" -ForegroundColor Red
+        }
+    }
+    catch {
+        Write-Host "An error occurred while getting the VM list: $_" -ForegroundColor Red
+    }
+}
+
+function Set-Network($conf) {
+    try {
+        Get-VM | Select-Object Name -ExpandProperty Name
+        try {
+            $vm = Get-VM -Name (Read-Host -Prompt "`nChoose a VM to change a Network adapter on") -ErrorAction Stop
+            Get-VirtualNetwork
+            $network = Read-Host -Prompt "`nSelect a Network"
+            Write-Host ""
+            Get-NetworkAdapter -VM $vm | Select-Object Name -ExpandProperty Name
+            $adapterName = Read-Host -Prompt "`nSelect a Network Adapter"
+            try {
+                Get-VM $vm | Get-NetworkAdapter -Name $adapterName | Set-NetworkAdapter -NetworkName $network -Confirm:$false
+                Write-Host "Network adapter on $vm changed successfully to $network." -ForegroundColor Green
+            }
+            catch {
+                Write-Host "An error occurred while changing the network adapter: $_" -ForegroundColor Red
+            }
+        }
+        catch {
+            Write-Host "An error occurred while selecting the VM: $_" -ForegroundColor Red
+        }
+    }
+    catch {
+        Write-Host "An error occurred while getting the VM list: $_" -ForegroundColor Red
     }
 }

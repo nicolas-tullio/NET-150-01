@@ -7,7 +7,9 @@ $conf = Get-480Config -config_path "/home/nicolas/Documents/Tech-Journal/SYS-480
 $option = Read-Host -Prompt "`nChoose a function:
 [1] Linked Clone
 [2] New Network
-[3] Get IP`n"
+[3] Get IP
+[4] Set Power
+[5] Set Network`n"
 
 switch ($option) {
     '1' {
@@ -21,6 +23,14 @@ switch ($option) {
     '3' {
         Clear-Host
         Get-IP -conf $conf
+    }
+    '4' {
+        Clear-Host
+        Set-Power -conf $conf
+    }
+    '5' {
+        Clear-Host
+        Set-Network -conf $conf
     }
     default { Write-Output "Invalid option." }
 }
