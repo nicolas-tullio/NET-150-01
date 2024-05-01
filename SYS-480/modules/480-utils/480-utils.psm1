@@ -49,7 +49,7 @@ function LinkedClone($conf) {
     try {
         Get-VM -Location $conf.vm_folder | Select-Object Name -ExpandProperty Name
         try {
-            $toclone = Get-VM -Name (Read-Host -Prompt "VM to Clone") -ErrorAction Stop
+            $toclone = Get-VM -Name (Read-Host -Prompt "Choose a VM to clone") -ErrorAction Stop
             try {
                 $snapshot = Get-Snapshot -VM $toclone -Name $conf.snapshot
                 $clonename = Read-Host -Prompt "Enter a name for the new VM"
@@ -90,5 +90,31 @@ function LinkedClone($conf) {
     }
     catch {
         Write-Host "An error occurred while getting the VM list: $_" -ForegroundColor Red
+    }
+}
+
+function New-Network($conf) {
+    try {
+        # Prompt the user for the new switch name
+        $switchName = Read-Host -Prompt "Enter the new Virtual Switch name"
+
+        # Create the switch
+        $vswitch = New-VirtualSwitch -VMHost $conf.esxi_host -Name $switchName -ErrorAction Stop
+        Write-Host ("Created Virtual Switch {0}" -f $vswitch.Name) -ForegroundColor Green
+
+        try {
+            # Prompt the user for the new port group name
+            $portGroupName = Read-Host -Prompt "Enter the new Port Group name"
+
+            # Create the port group
+            $vport = New-VirtualPortGroup -Name $portGroupName -VirtualSwitch $vswitch -ErrorAction Stop
+            Write-Host ("Created Virtual Port Group {0}" -f $vport.Name) -ForegroundColor Green
+        } 
+        catch {
+            Write-Host "Port Group creation failed. Error: $_" -ForegroundColor Red
+        }
+    } 
+    catch {
+        Write-Host "Virtual Switch creation failed. Error: $_" -ForegroundColor Red
     }
 }
