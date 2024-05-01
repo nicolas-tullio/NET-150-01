@@ -1,5 +1,5 @@
 function 480Banner() {
-    Write-Host "Hello SYS480"
+    Write-Host "`nHello SYS480`n"
 }
 function 480Connect([string] $server) {
     $connection = $global:DefaultVIServer
@@ -56,24 +56,30 @@ function LinkedClone($conf) {
                 $linkedname = "{0}.linked" -f $clonename
                 try {
                     $linkedvm = New-VM -LinkedClone -Name $linkedname -VM $toclone -ReferenceSnapshot $snapshot -VMHost $conf.esxi_host -Datastore $conf.datastore
-                    try {
-                        $newvm = New-VM -Name $clonename -VM $linkedvm -VMHost $conf.esxi_host -Datastore $conf.datastore
+                    $fullClone = Read-Host -Prompt "Do you want to create a full clone? (yes/no)"
+                    if ($fullClone -eq "yes") {
                         try {
-                            $newvm | New-Snapshot -Name "Base" 
+                            $newvm = New-VM -Name $clonename -VM $linkedvm -VMHost $conf.esxi_host -Datastore $conf.datastore
                             try {
-                                $linkedvm | Remove-VM -DeletePermanently -Confirm:$false
-                                Write-Host "Clone created at $conf.datastore named $clonename." -ForegroundColor Green
+                                $newvm | New-Snapshot -Name "Base" 
+                                try {
+                                    $linkedvm | Remove-VM -DeletePermanently -Confirm:$false
+                                    Write-Host "Clone created at $conf.datastore named $clonename." -ForegroundColor Green
+                                }
+                                catch {
+                                    Write-Host "An error occurred while deleting the linked VM: $_" -ForegroundColor Red
+                                }
                             }
                             catch {
-                                Write-Host "An error occurred while deleting the linked VM: $_" -ForegroundColor Red
+                                Write-Host "An error occurred while creating the new Base snapshot: $_" -ForegroundColor Red
                             }
                         }
                         catch {
-                            Write-Host "An error occurred while creating the new Base snapshot: $_" -ForegroundColor Red
+                            Write-Host "An error occurred while creating the new VM: $_" -ForegroundColor Red
                         }
                     }
-                    catch {
-                        Write-Host "An error occurred while creating the new VM: $_" -ForegroundColor Red
+                    else {
+                        Write-Host "Ending process as per user request." -ForegroundColor Green
                     }
                 }
                 catch {
@@ -92,6 +98,7 @@ function LinkedClone($conf) {
         Write-Host "An error occurred while getting the VM list: $_" -ForegroundColor Red
     }
 }
+
 
 function New-Network($conf) {
     try {
@@ -116,5 +123,23 @@ function New-Network($conf) {
     } 
     catch {
         Write-Host "Virtual Switch creation failed. Error: $_" -ForegroundColor Red
+    }
+}
+
+function Get-IP ($conf) {
+    try {
+        Get-VM -Location $conf.vm_folder | Select-Object Name -ExpandProperty Name
+        $vm = Get-VM -Name (Read-Host -Prompt "`nChoose a VM") -ErrorAction Stop
+        $ip = (Get-VM -Name $vm).Guest.IPAddress[0]
+        $mac = (Get-NetworkAdapter -VM $vm | Select-Object MacAddress).MacAddress
+        $output = "
+Name: $vm 
+IP: $ip
+MAC: $mac
+        "
+        Write-Host $output
+    }
+    catch {
+        Write-Host "An error occurred: $_"
     }
 }
