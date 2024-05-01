@@ -62,7 +62,7 @@ function LinkedClone($conf) {
                             $newvm | New-Snapshot -Name "Base" 
                             try {
                                 $linkedvm | Remove-VM -DeletePermanently -Confirm:$false
-                                Write-Host "Clone created at $datastore named $clonename." -ForegroundColor Green
+                                Write-Host "Clone created at $conf.datastore named $clonename." -ForegroundColor Green
                             }
                             catch {
                                 Write-Host "An error occurred while deleting the linked VM: $_" -ForegroundColor Red
