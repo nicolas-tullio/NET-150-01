@@ -129,7 +129,8 @@ function New-Network($conf) {
 function Get-IP ($conf) {
     try {
         Get-VM | Select-Object Name -ExpandProperty Name
-        $vm = Get-VM -Name (Read-Host -Prompt "`nChoose a VM") -ErrorAction Stop
+        $vms = Get-VM -Name (Read-Host -Prompt "`nChoose a VM") -ErrorAction Stop
+        foreach ($vm in $vms) {
         $ip = (Get-VM -Name $vm).Guest.IPAddress[0]
         $mac = (Get-NetworkAdapter -VM $vm | Select-Object MacAddress).MacAddress
         $output = "
@@ -138,6 +139,7 @@ IP: $ip
 MAC: $mac
         "
         Write-Host $output
+        }
     }
     catch {
         Write-Host "An error occurred: $_"
