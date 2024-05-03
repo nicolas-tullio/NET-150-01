@@ -131,14 +131,14 @@ function Get-IP ($conf) {
         Get-VM | Select-Object Name -ExpandProperty Name
         $vms = Get-VM -Name (Read-Host -Prompt "`nChoose a VM") -ErrorAction Stop
         foreach ($vm in $vms) {
-        $ip = (Get-VM -Name $vm).Guest.IPAddress[0]
-        $mac = (Get-NetworkAdapter -VM $vm | Select-Object MacAddress).MacAddress
-        $output = "
+            $ip = (Get-VM -Name $vm).Guest.IPAddress[0]
+            $mac = (Get-NetworkAdapter -VM $vm | Select-Object MacAddress).MacAddress
+            $output = "
 Name: $vm 
 IP: $ip
 MAC: $mac
         "
-        Write-Host $output
+            Write-Host $output
         }
     }
     catch {
