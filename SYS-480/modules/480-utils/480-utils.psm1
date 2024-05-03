@@ -209,3 +209,22 @@ function Set-Network($conf) {
         Write-Host "An error occurred while getting the VM list: $_" -ForegroundColor Red
     }
 }
+
+function Set-Win-IP {
+    try {
+        Get-VM | Select-Object Name -ExpandProperty Name
+        $vm = Get-VM -Name (Read-Host -Prompt "`nChoose a Windows VM to change the IP of") -ErrorAction Stop
+        $password = Read-Host "Password for deployer user" -AsSecureString
+        $ip = Read-Host "Enter the IP address"
+        $subnet = Read-Host "Enter the subnet mask"
+        $dns = Read-Host "Enter the DNS server"
+        $gateway = Read-Host "Enter the default gateway"
+        $setAddr = "netsh interface ipv4 set address Ethernet0 static $ip $subnet $gateway"
+        $setDns = "netsh interface ipv4 add dnsserver Ethernet0 address=$dns index=1"
+        Invoke-VMScript -ScriptText $setAddr -VM $vm -GuestUser deployer -GuestPassword $password -ErrorAction Stop
+        Invoke-VMScript -ScriptText $setDns -VM $vm -GuestUser deployer -GuestPassword $password -ErrorAction Stop
+    }
+    catch {
+        Write-Host "An error occurred: $_" -ForegroundColor Red
+    }
+}

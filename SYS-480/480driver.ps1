@@ -9,7 +9,8 @@ $option = Read-Host -Prompt "`nChoose a function:
 [2] New Network
 [3] Get IP
 [4] Set Power
-[5] Set Network`n"
+[5] Set Network
+[6] Set Windows IP`n"
 
 switch ($option) {
     '1' {
@@ -31,6 +32,10 @@ switch ($option) {
     '5' {
         Clear-Host
         Set-Network -conf $conf
+    }
+    '6' {
+        Clear-Host
+        Set-Win-IP
     }
     default { Write-Output "Invalid option." }
 }
